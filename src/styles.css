@@ -3,6 +3,7 @@ layer(base);
 
 @import "tailwindcss";
 @import "swiper/css/bundle";
+@import "primeicons/primeicons.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -864,4 +865,99 @@ pre[class*="language-"] {
 }
 pre[class*="language-"].line-numbers {
   padding-left: 2.8em !important;
+}
+
+/* PrimeNG PanelMenu Custom Styles for CMS Sidebar */
+.cms-sidebar-menu {
+  .p-panelmenu {
+    @apply bg-transparent;
+  }
+
+  .p-panelmenu-panel {
+    @apply mb-1;
+  }
+
+  .p-panelmenu-header {
+    @apply rounded-lg overflow-hidden;
+  }
+
+  .p-panelmenu-header-content {
+    @apply bg-transparent border-none rounded-lg transition-colors duration-200;
+  }
+
+  .p-panelmenu-header-content:hover {
+    @apply bg-gray-100 dark:bg-white/5;
+  }
+
+  .p-panelmenu-header-content.p-highlight {
+    @apply bg-brand-50 dark:bg-brand-500/[0.12];
+  }
+
+  .p-panelmenu-header-link {
+    @apply px-3 py-2.5 gap-3 text-gray-700 dark:text-gray-300 font-medium text-sm;
+  }
+
+  .p-panelmenu-header-link:focus {
+    @apply shadow-none;
+  }
+
+  .p-panelmenu-header-content.p-highlight .p-panelmenu-header-link {
+    @apply text-brand-500 dark:text-brand-400;
+  }
+
+  .p-panelmenu-header-link .p-menuitem-icon {
+    @apply text-gray-500 dark:text-gray-400 text-lg;
+  }
+
+  .p-panelmenu-header-content.p-highlight .p-menuitem-icon {
+    @apply text-brand-500 dark:text-brand-400;
+  }
+
+  .p-panelmenu-header-link .p-submenu-icon {
+    @apply text-gray-400 dark:text-gray-500 ml-auto;
+  }
+
+  .p-panelmenu-content {
+    @apply bg-transparent border-none pl-4 py-1;
+  }
+
+  .p-panelmenu-submenu {
+    @apply p-0;
+  }
+
+  .p-panelmenu-submenu .p-menuitem {
+    @apply mb-0.5;
+  }
+
+  .p-panelmenu-submenu .p-menuitem-content {
+    @apply bg-transparent rounded-lg transition-colors duration-200;
+  }
+
+  .p-panelmenu-submenu .p-menuitem-content:hover {
+    @apply bg-gray-100 dark:bg-white/5;
+  }
+
+  .p-panelmenu-submenu .p-menuitem-content.p-highlight {
+    @apply bg-brand-50 dark:bg-brand-500/[0.12];
+  }
+
+  .p-panelmenu-submenu .p-menuitem-link {
+    @apply px-3 py-2 gap-3 text-gray-600 dark:text-gray-400 font-medium text-sm;
+  }
+
+  .p-panelmenu-submenu .p-menuitem-link:focus {
+    @apply shadow-none;
+  }
+
+  .p-panelmenu-submenu .p-menuitem-content.p-highlight .p-menuitem-link {
+    @apply text-brand-500 dark:text-brand-400;
+  }
+
+  .p-panelmenu-submenu .p-menuitem-icon {
+    @apply text-gray-400 dark:text-gray-500 text-base;
+  }
+
+  .p-panelmenu-submenu .p-menuitem-content.p-highlight .p-menuitem-icon {
+    @apply text-brand-500 dark:text-brand-400;
+  }
 }
