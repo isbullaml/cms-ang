@@ -1,0 +1,529 @@
+@if (student) {
+<!-- Breadcrumb & Back -->
+<div class="mb-6">
+  <button
+    (click)="goBack()"
+    class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors mb-4"
+  >
+    <i class="pi pi-arrow-left text-xs"></i>
+    Back to Students
+  </button>
+
+  <!-- Student Header Card -->
+  <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+      <!-- Avatar -->
+      <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-100 text-2xl font-bold text-brand-600 dark:bg-brand-500/20 dark:text-brand-400 shrink-0">
+        {{ getInitials() }}
+      </div>
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+          <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
+            {{ student.firstName }} {{ student.lastName }}
+          </h1>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ getStatusClasses(student.status) }}">
+              {{ student.status | titlecase }}
+            </span>
+            <span
+              class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"
+              [class]="student.portalEnabled
+                ? 'bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-400'
+                : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'"
+            >
+              <i class="pi text-xs" [class]="student.portalEnabled ? 'pi-globe' : 'pi-lock'"></i>
+              {{ student.portalEnabled ? 'Portal Enabled' : 'Portal Disabled' }}
+            </span>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+          <span class="inline-flex items-center gap-1.5">
+            <i class="pi pi-envelope text-xs"></i>
+            {{ student.email }}
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <i class="pi pi-phone text-xs"></i>
+            {{ student.phone }}
+          </span>
+          @if (student.grade) {
+            <span class="inline-flex items-center gap-1.5">
+              <i class="pi pi-graduation-cap text-xs"></i>
+              {{ student.grade }}
+            </span>
+          }
+          <span class="inline-flex items-center gap-1.5">
+            <i class="pi pi-calendar text-xs"></i>
+            Enrolled {{ student.enrollmentDate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          (click)="togglePortal()"
+          class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+        >
+          <i class="pi mr-1.5 text-xs" [class]="student.portalEnabled ? 'pi-lock' : 'pi-globe'"></i>
+          {{ student.portalEnabled ? 'Disable Portal' : 'Enable Portal' }}
+        </button>
+        <button
+          (click)="openEditDialog()"
+          class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 transition-colors"
+        >
+          <i class="pi pi-pencil mr-1.5 text-xs"></i>
+          Edit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="mb-6">
+  <div class="flex gap-1 rounded-xl border border-gray-200 bg-white p-1.5 dark:border-gray-800 dark:bg-gray-900 overflow-x-auto">
+    @for (tab of [
+      { key: 'details', label: 'Details', icon: 'pi-user' },
+      { key: 'sessions', label: 'Sessions & Subjects', icon: 'pi-calendar' },
+      { key: 'payment', label: 'Payment', icon: 'pi-credit-card' },
+      { key: 'notes', label: 'Notes', icon: 'pi-file-edit' },
+      { key: 'attachments', label: 'Attachments', icon: 'pi-paperclip' }
+    ]; track tab.key) {
+      <button
+        (click)="activeTab = $any(tab.key)"
+        class="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors"
+        [class]="activeTab === tab.key
+          ? 'bg-brand-500 text-white shadow-sm'
+          : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'"
+      >
+        <i class="pi {{ tab.icon }} text-sm"></i>
+        {{ tab.label }}
+        @if (tab.key === 'notes' && student.notes.length > 0) {
+          <span class="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px]"
+            [class]="activeTab === 'notes' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'"
+          >{{ student.notes.length }}</span>
+        }
+        @if (tab.key === 'attachments' && student.attachments.length > 0) {
+          <span class="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px]"
+            [class]="activeTab === 'attachments' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'"
+          >{{ student.attachments.length }}</span>
+        }
+      </button>
+    }
+  </div>
+</div>
+
+<!-- TAB: Details -->
+@if (activeTab === 'details') {
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Personal Information -->
+    <div class="lg:col-span-2 rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Personal Information</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Full Name</p>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ student.firstName }} {{ student.lastName }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Email Address</p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ student.email }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Phone Number</p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ student.phone }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Date of Birth</p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ student.dateOfBirth }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Gender</p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ student.gender | titlecase }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Grade / Level</p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ student.grade || '—' }}</p>
+          </div>
+          <div class="sm:col-span-2">
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Address</p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ student.address }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Enrollment Date</p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">{{ student.enrollmentDate }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Portal Access</p>
+            <span
+              class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium"
+              [class]="student.portalEnabled
+                ? 'bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-400'
+                : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'"
+            >
+              <i class="pi text-xs" [class]="student.portalEnabled ? 'pi-check-circle' : 'pi-times-circle'"></i>
+              {{ student.portalEnabled ? 'Enabled' : 'Disabled' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parent/Guardian Card -->
+    <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Parent / Guardian</h3>
+      </div>
+      <div class="p-6">
+        @if (student.parent) {
+          <div class="flex items-center gap-3 mb-5">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-600 dark:bg-orange-500/20 dark:text-orange-400">
+              {{ student.parent.firstName[0] }}{{ student.parent.lastName[0] }}
+            </div>
+            <div>
+              <p class="font-medium text-gray-900 dark:text-white">{{ student.parent.firstName }} {{ student.parent.lastName }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ student.parent.relationship | titlecase }}</p>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <i class="pi pi-envelope text-xs text-gray-400 w-4"></i>
+              <span>{{ student.parent.email }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <i class="pi pi-phone text-xs text-gray-400 w-4"></i>
+              <span>{{ student.parent.phone }}</span>
+            </div>
+          </div>
+        } @else {
+          <div class="flex flex-col items-center justify-center py-8">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-3">
+              <i class="pi pi-users text-lg text-gray-400"></i>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center">No parent or guardian linked to this student.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- TAB: Sessions & Subjects -->
+@if (activeTab === 'sessions') {
+  <div class="space-y-6">
+    <!-- Enrolled Subjects -->
+    <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Enrolled Subjects</h3>
+      </div>
+      <div class="p-6">
+        @if (student.subjects.length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            @for (subject of student.subjects; track subject.id) {
+              <div class="rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/50">
+                <div class="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 class="font-medium text-gray-900 dark:text-white">{{ subject.name }}</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ subject.tutorName }}</p>
+                  </div>
+                  <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium {{ getSubjectStatusClasses(subject.status) }}">
+                    {{ subject.status | titlecase }}
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-3">
+                  <i class="pi pi-clock text-xs"></i>
+                  {{ subject.schedule }}
+                </div>
+                <!-- Progress Bar -->
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Progress</span>
+                    <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ subject.progress }}%</span>
+                  </div>
+                  <div class="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div
+                      class="h-1.5 rounded-full transition-all duration-500 {{ getProgressColor(subject.progress) }}"
+                      [style.width.%]="subject.progress"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="flex flex-col items-center justify-center py-8">
+            <i class="pi pi-book text-2xl text-gray-300 dark:text-gray-600 mb-2"></i>
+            <p class="text-sm text-gray-500 dark:text-gray-400">No subjects enrolled.</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Session History -->
+    <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Session History</h3>
+      </div>
+      <div class="overflow-x-auto">
+        @if (student.sessions.length > 0) {
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-100 dark:border-gray-800">
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Subject</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Tutor</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Time</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (session of student.sessions; track session.id) {
+                <tr class="border-b border-gray-50 last:border-0 dark:border-gray-800">
+                  <td class="px-6 py-3.5 text-sm text-gray-700 dark:text-gray-300">{{ session.date }}</td>
+                  <td class="px-6 py-3.5 text-sm font-medium text-gray-900 dark:text-white">{{ session.subjectName }}</td>
+                  <td class="px-6 py-3.5 text-sm text-gray-600 dark:text-gray-400">{{ session.tutorName }}</td>
+                  <td class="px-6 py-3.5 text-sm text-gray-600 dark:text-gray-400">{{ session.startTime }} - {{ session.endTime }}</td>
+                  <td class="px-6 py-3.5">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ getSessionStatusClasses(session.status) }}">
+                      {{ session.status | titlecase }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-3.5 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate">{{ session.notes || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <div class="flex flex-col items-center justify-center py-8">
+            <i class="pi pi-calendar text-2xl text-gray-300 dark:text-gray-600 mb-2"></i>
+            <p class="text-sm text-gray-500 dark:text-gray-400">No sessions recorded.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- TAB: Payment -->
+@if (activeTab === 'payment') {
+  <div class="space-y-6">
+    <!-- Payment Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-success-50 dark:bg-success-500/10">
+            <i class="pi pi-check-circle text-lg text-success-500"></i>
+          </div>
+          <div>
+            <p class="text-xl font-semibold text-gray-900 dark:text-white">${{ totalPaid.toLocaleString() }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Total Paid</p>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-warning-50 dark:bg-warning-500/10">
+            <i class="pi pi-clock text-lg text-warning-500"></i>
+          </div>
+          <div>
+            <p class="text-xl font-semibold text-gray-900 dark:text-white">${{ totalPending.toLocaleString() }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Outstanding</p>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-500/10">
+            <i class="pi pi-receipt text-lg text-brand-500"></i>
+          </div>
+          <div>
+            <p class="text-xl font-semibold text-gray-900 dark:text-white">{{ student.payments.length }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Total Transactions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Table -->
+    <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Payment History</h3>
+      </div>
+      <div class="overflow-x-auto">
+        @if (student.payments.length > 0) {
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-100 dark:border-gray-800">
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Description</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Amount</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Method</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (payment of student.payments; track payment.id) {
+                <tr class="border-b border-gray-50 last:border-0 dark:border-gray-800">
+                  <td class="px-6 py-3.5 text-sm text-gray-700 dark:text-gray-300">{{ payment.date }}</td>
+                  <td class="px-6 py-3.5 text-sm font-medium text-gray-900 dark:text-white">{{ payment.description }}</td>
+                  <td class="px-6 py-3.5 text-sm font-semibold text-gray-900 dark:text-white">${{ payment.amount.toLocaleString() }}</td>
+                  <td class="px-6 py-3.5 text-sm text-gray-600 dark:text-gray-400">{{ payment.method || '—' }}</td>
+                  <td class="px-6 py-3.5">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ getPaymentStatusClasses(payment.status) }}">
+                      {{ payment.status | titlecase }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <div class="flex flex-col items-center justify-center py-8">
+            <i class="pi pi-credit-card text-2xl text-gray-300 dark:text-gray-600 mb-2"></i>
+            <p class="text-sm text-gray-500 dark:text-gray-400">No payment records.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- TAB: Notes -->
+@if (activeTab === 'notes') {
+  <div class="space-y-6">
+    <!-- Add Note -->
+    <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Add a Note</h3>
+      <div class="flex gap-3">
+        <textarea
+          [(ngModel)]="newNoteContent"
+          rows="3"
+          placeholder="Write a note about this student..."
+          class="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 resize-none"
+        ></textarea>
+      </div>
+      <div class="flex justify-end mt-3">
+        <button
+          (click)="addNote()"
+          [disabled]="!newNoteContent.trim()"
+          class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <i class="pi pi-plus mr-1.5 text-xs"></i>
+          Add Note
+        </button>
+      </div>
+    </div>
+
+    <!-- Notes List -->
+    @if (sortedNotes.length > 0) {
+      <div class="space-y-3">
+        @for (note of sortedNotes; track note.id) {
+          <div
+            class="rounded-xl border bg-white p-5 transition-colors dark:bg-gray-900"
+            [class]="note.pinned
+              ? 'border-brand-200 dark:border-brand-500/30'
+              : 'border-gray-200 dark:border-gray-800'"
+          >
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-center gap-2">
+                @if (note.pinned) {
+                  <i class="pi pi-bookmark-fill text-xs text-brand-500"></i>
+                }
+                <span class="text-sm font-medium text-gray-900 dark:text-white">{{ note.author }}</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">{{ note.authorRole }}</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">&middot;</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">{{ note.date }}</span>
+              </div>
+              <button
+                (click)="toggleNotePin(note.id)"
+                class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-brand-500 dark:hover:bg-gray-800 transition-colors"
+                [title]="note.pinned ? 'Unpin note' : 'Pin note'"
+              >
+                <i class="pi text-xs" [class]="note.pinned ? 'pi-bookmark-fill text-brand-500' : 'pi-bookmark'"></i>
+              </button>
+            </div>
+            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ note.content }}</p>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="flex flex-col items-center justify-center py-12">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-3">
+          <i class="pi pi-file-edit text-xl text-gray-400"></i>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">No notes yet. Add the first note above.</p>
+      </div>
+    }
+  </div>
+}
+
+<!-- TAB: Attachments -->
+@if (activeTab === 'attachments') {
+  <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+      <h3 class="text-base font-semibold text-gray-900 dark:text-white">Files & Documents</h3>
+      <button class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+        <i class="pi pi-upload mr-1.5 text-xs"></i>
+        Upload
+      </button>
+    </div>
+
+    @if (student.attachments.length > 0) {
+      <div class="divide-y divide-gray-100 dark:divide-gray-800">
+        @for (file of student.attachments; track file.id) {
+          <div class="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors dark:hover:bg-white/[0.02]">
+            <!-- File Icon -->
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 shrink-0">
+              <i class="pi {{ getFileIcon(file.type) }} text-lg {{ getFileIconColor(file.type) }}"></i>
+            </div>
+
+            <!-- File Info -->
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ file.name }}</p>
+              <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                <span>{{ file.size }}</span>
+                <span>&middot;</span>
+                <span>{{ file.uploadedBy }}</span>
+                <span>&middot;</span>
+                <span>{{ file.uploadedDate }}</span>
+              </div>
+            </div>
+
+            <!-- Category Badge -->
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium {{ getCategoryBadgeClasses(file.category) }}">
+              {{ file.category | titlecase }}
+            </span>
+
+            <!-- Download Action -->
+            <button class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors">
+              <i class="pi pi-download text-sm"></i>
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="flex flex-col items-center justify-center py-12">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-3">
+          <i class="pi pi-paperclip text-xl text-gray-400"></i>
+        </div>
+        <p class="text-sm font-medium text-gray-900 dark:text-white mb-1">No files uploaded</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Upload documents, reports, or certificates.</p>
+      </div>
+    }
+  </div>
+}
+
+<!-- Edit Dialog -->
+@if (showEditDialog) {
+  <app-student-form
+    [student]="student"
+    (close)="onEditClose()"
+    (save)="onEditSave($event)"
+  />
+}
+}

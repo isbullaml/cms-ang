@@ -16,228 +16,33 @@ import { MenuItem } from 'primeng/api';
   templateUrl: './app-sidebar.component.html',
 })
 export class AppSidebarComponent {
-  // CMS Menu Items using PrimeNG MenuItem structure
+  // Tutor Management System Menu
   menuItems: MenuItem[] = [
     {
       label: 'Dashboard',
-      icon: 'pi pi-home',
+      icon: 'pi pi-objects-column',
       routerLink: '/',
       routerLinkActiveOptions: { exact: true }
     },
     {
-      label: 'Coaches',
-      icon: 'pi pi-users',
-      items: [
-        {
-          label: 'All Coaches',
-          icon: 'pi pi-list',
-          routerLink: '/coaches'
-        },
-        {
-          label: 'Add Coach',
-          icon: 'pi pi-user-plus',
-          routerLink: '/coaches/add'
-        },
-        {
-          label: 'Coach Analytics',
-          icon: 'pi pi-chart-bar',
-          routerLink: '/coaches/analytics'
-        }
-      ]
+      label: 'Students',
+      icon: 'pi pi-graduation-cap',
+      routerLink: '/students'
     },
     {
-      label: 'Clients',
-      icon: 'pi pi-user',
-      items: [
-        {
-          label: 'All Clients',
-          icon: 'pi pi-list',
-          routerLink: '/clients'
-        },
-        {
-          label: 'Add Client',
-          icon: 'pi pi-user-plus',
-          routerLink: '/clients/add'
-        },
-        {
-          label: 'Progress Tracking',
-          icon: 'pi pi-chart-line',
-          routerLink: '/clients/progress'
-        },
-        {
-          label: 'Client Groups',
-          icon: 'pi pi-users',
-          routerLink: '/clients/groups'
-        }
-      ]
-    },
-    {
-      label: 'Programs',
+      label: 'Subjects',
       icon: 'pi pi-book',
-      items: [
-        {
-          label: 'Training Programs',
-          icon: 'pi pi-list',
-          routerLink: '/programs'
-        },
-        {
-          label: 'Create Program',
-          icon: 'pi pi-plus',
-          routerLink: '/programs/create'
-        },
-        {
-          label: 'Program Templates',
-          icon: 'pi pi-copy',
-          routerLink: '/programs/templates'
-        },
-        {
-          label: 'Exercise Library',
-          icon: 'pi pi-database',
-          routerLink: '/programs/exercises'
-        }
-      ]
-    },
-    {
-      label: 'Sessions',
-      icon: 'pi pi-calendar',
-      items: [
-        {
-          label: 'Calendar',
-          icon: 'pi pi-calendar',
-          routerLink: '/calendar'
-        },
-        {
-          label: 'Upcoming Sessions',
-          icon: 'pi pi-clock',
-          routerLink: '/sessions/upcoming'
-        },
-        {
-          label: 'Session History',
-          icon: 'pi pi-history',
-          routerLink: '/sessions/history'
-        },
-        {
-          label: 'Book Session',
-          icon: 'pi pi-plus-circle',
-          routerLink: '/sessions/book'
-        }
-      ]
-    },
-    {
-      label: 'Assessments',
-      icon: 'pi pi-file-edit',
-      items: [
-        {
-          label: 'Assessment Forms',
-          icon: 'pi pi-file',
-          routerLink: '/assessments/forms'
-        },
-        {
-          label: 'Assessment Results',
-          icon: 'pi pi-chart-pie',
-          routerLink: '/assessments/results'
-        },
-        {
-          label: 'Create Assessment',
-          icon: 'pi pi-plus',
-          routerLink: '/assessments/create'
-        }
-      ]
-    },
-    {
-      label: 'Communication',
-      icon: 'pi pi-comments',
-      items: [
-        {
-          label: 'Messages',
-          icon: 'pi pi-envelope',
-          routerLink: '/messages',
-          badge: '3'
-        },
-        {
-          label: 'Notifications',
-          icon: 'pi pi-bell',
-          routerLink: '/notifications'
-        },
-        {
-          label: 'Announcements',
-          icon: 'pi pi-megaphone',
-          routerLink: '/announcements'
-        }
-      ]
-    },
-    {
-      label: 'Reports',
-      icon: 'pi pi-chart-bar',
-      items: [
-        {
-          label: 'Overview',
-          icon: 'pi pi-chart-pie',
-          routerLink: '/reports'
-        },
-        {
-          label: 'Revenue Reports',
-          icon: 'pi pi-dollar',
-          routerLink: '/reports/revenue'
-        },
-        {
-          label: 'Client Reports',
-          icon: 'pi pi-users',
-          routerLink: '/reports/clients'
-        },
-        {
-          label: 'Performance Reports',
-          icon: 'pi pi-chart-line',
-          routerLink: '/reports/performance'
-        }
-      ]
+      routerLink: '/subjects'
     },
     {
       label: 'Payments',
       icon: 'pi pi-credit-card',
-      items: [
-        {
-          label: 'Invoices',
-          icon: 'pi pi-file',
-          routerLink: '/invoices'
-        },
-        {
-          label: 'Subscriptions',
-          icon: 'pi pi-sync',
-          routerLink: '/payments/subscriptions'
-        },
-        {
-          label: 'Payment History',
-          icon: 'pi pi-history',
-          routerLink: '/payments/history'
-        }
-      ]
+      routerLink: '/payments'
     },
     {
       label: 'Settings',
       icon: 'pi pi-cog',
-      items: [
-        {
-          label: 'General Settings',
-          icon: 'pi pi-sliders-h',
-          routerLink: '/settings'
-        },
-        {
-          label: 'Profile',
-          icon: 'pi pi-user',
-          routerLink: '/profile'
-        },
-        {
-          label: 'Integrations',
-          icon: 'pi pi-link',
-          routerLink: '/settings/integrations'
-        },
-        {
-          label: 'Team Management',
-          icon: 'pi pi-users',
-          routerLink: '/settings/team'
-        }
-      ]
+      routerLink: '/settings'
     }
   ];
 
