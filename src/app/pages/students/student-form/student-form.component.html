@@ -1,0 +1,265 @@
+<!-- Dialog Backdrop -->
+<div
+  class="dialog-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+  (click)="onBackdropClick($event)"
+>
+  <!-- Dialog Panel -->
+  <div class="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl bg-white shadow-theme-xl dark:bg-gray-900 overflow-hidden animate-in">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+          {{ student ? 'Edit Student' : 'Add New Student' }}
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+          {{ student ? 'Update the student information below.' : 'Fill in the details to register a new student.' }}
+        </p>
+      </div>
+      <button
+        (click)="onClose()"
+        class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <!-- Form Tabs -->
+    <div class="flex px-6 pt-4 gap-1">
+      <button
+        (click)="activeTab = 'student'"
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+        [class]="activeTab === 'student'
+          ? 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400'
+          : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'"
+      >
+        <i class="pi pi-user mr-2"></i>Student Info
+      </button>
+      <button
+        (click)="activeTab = 'parent'"
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+        [class]="activeTab === 'parent'
+          ? 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400'
+          : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'"
+      >
+        <i class="pi pi-users mr-2"></i>Parent / Guardian
+      </button>
+    </div>
+
+    <!-- Scrollable Body -->
+    <div class="flex-1 overflow-y-auto px-6 py-5">
+      <!-- Student Info Tab -->
+      @if (activeTab === 'student') {
+        <div class="space-y-5">
+          <!-- Name Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">First Name *</label>
+              <input
+                type="text"
+                [(ngModel)]="formData.firstName"
+                placeholder="Enter first name"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Last Name *</label>
+              <input
+                type="text"
+                [(ngModel)]="formData.lastName"
+                placeholder="Enter last name"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+              />
+            </div>
+          </div>
+
+          <!-- Email & Phone -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+              <input
+                type="email"
+                [(ngModel)]="formData.email"
+                placeholder="email@example.com"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Phone</label>
+              <input
+                type="tel"
+                [(ngModel)]="formData.phone"
+                placeholder="+1 (555) 000-0000"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+              />
+            </div>
+          </div>
+
+          <!-- DOB & Gender -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Date of Birth</label>
+              <input
+                type="date"
+                [(ngModel)]="formData.dateOfBirth"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Gender</label>
+              <select
+                [(ngModel)]="formData.gender"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Grade -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Grade / Level</label>
+            <input
+              type="text"
+              [(ngModel)]="formData.grade"
+              placeholder="e.g., 8th Grade, Year 10, University"
+              class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+            />
+          </div>
+
+          <!-- Address -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Address</label>
+            <textarea
+              [(ngModel)]="formData.address"
+              rows="2"
+              placeholder="Full address"
+              class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Portal Toggle -->
+          <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3.5 dark:border-gray-700 dark:bg-gray-800">
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Enable Student Portal</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Allow student to access the online portal for schedules, materials, and communication.</p>
+            </div>
+            <label class="relative inline-flex cursor-pointer items-center">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.portalEnabled"
+                class="peer sr-only"
+              />
+              <div class="h-6 w-11 rounded-full bg-gray-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full dark:bg-gray-600 dark:peer-checked:bg-brand-500"></div>
+            </label>
+          </div>
+        </div>
+      }
+
+      <!-- Parent Info Tab -->
+      @if (activeTab === 'parent') {
+        <div class="space-y-5">
+          <!-- Has Parent Toggle -->
+          <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3.5 dark:border-gray-700 dark:bg-gray-800">
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Link Parent / Guardian</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Associate a parent or guardian with this student account.</p>
+            </div>
+            <label class="relative inline-flex cursor-pointer items-center">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.hasParent"
+                class="peer sr-only"
+              />
+              <div class="h-6 w-11 rounded-full bg-gray-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full dark:bg-gray-600 dark:peer-checked:bg-brand-500"></div>
+            </label>
+          </div>
+
+          @if (formData.hasParent) {
+            <!-- Relationship -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Relationship</label>
+              <select
+                [(ngModel)]="formData.parentRelationship"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+              >
+                <option value="father">Father</option>
+                <option value="mother">Mother</option>
+                <option value="guardian">Guardian</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- Parent Name -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">First Name *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="formData.parentFirstName"
+                  placeholder="Parent first name"
+                  class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Last Name *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="formData.parentLastName"
+                  placeholder="Parent last name"
+                  class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+                />
+              </div>
+            </div>
+
+            <!-- Parent Contact -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+                <input
+                  type="email"
+                  [(ngModel)]="formData.parentEmail"
+                  placeholder="parent@example.com"
+                  class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Phone</label>
+                <input
+                  type="tel"
+                  [(ngModel)]="formData.parentPhone"
+                  placeholder="+1 (555) 000-0000"
+                  class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+                />
+              </div>
+            </div>
+          } @else {
+            <div class="flex flex-col items-center justify-center py-10">
+              <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-3">
+                <i class="pi pi-users text-xl text-gray-400"></i>
+              </div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Enable the toggle above to add parent information.</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-800">
+      <button
+        (click)="onClose()"
+        class="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="onSave()"
+        class="rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors"
+      >
+        {{ student ? 'Save Changes' : 'Add Student' }}
+      </button>
+    </div>
+  </div>
+</div>

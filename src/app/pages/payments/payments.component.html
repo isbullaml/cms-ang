@@ -1,0 +1,84 @@
+<!-- Page Header -->
+<div class="mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Payments</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Track and manage all student payments and invoices.</p>
+    </div>
+    <button class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors">
+      <i class="pi pi-plus text-sm"></i>
+      Record Payment
+    </button>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+  <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex items-center gap-3">
+      <div class="flex h-11 w-11 items-center justify-center rounded-full bg-success-50 dark:bg-success-500/10">
+        <i class="pi pi-check-circle text-xl text-success-500"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-semibold text-gray-900 dark:text-white">${{ totalRevenue.toLocaleString() }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Total Revenue</p>
+      </div>
+    </div>
+  </div>
+  <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex items-center gap-3">
+      <div class="flex h-11 w-11 items-center justify-center rounded-full bg-warning-50 dark:bg-warning-500/10">
+        <i class="pi pi-clock text-xl text-warning-500"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-semibold text-gray-900 dark:text-white">${{ totalPending.toLocaleString() }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Pending</p>
+      </div>
+    </div>
+  </div>
+  <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex items-center gap-3">
+      <div class="flex h-11 w-11 items-center justify-center rounded-full bg-error-50 dark:bg-error-500/10">
+        <i class="pi pi-exclamation-circle text-xl text-error-500"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-semibold text-gray-900 dark:text-white">${{ totalOverdue.toLocaleString() }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Overdue</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Table -->
+<div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-gray-200 dark:border-gray-800">
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Date</th>
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Student</th>
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Description</th>
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Amount</th>
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Method</th>
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (payment of payments; track payment.id) {
+          <tr class="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors dark:border-gray-800 dark:hover:bg-white/[0.02]">
+            <td class="px-6 py-3.5 text-sm text-gray-700 dark:text-gray-300">{{ payment.date }}</td>
+            <td class="px-6 py-3.5 text-sm font-medium text-gray-900 dark:text-white">{{ payment.student }}</td>
+            <td class="px-6 py-3.5 text-sm text-gray-600 dark:text-gray-400">{{ payment.description }}</td>
+            <td class="px-6 py-3.5 text-sm font-semibold text-gray-900 dark:text-white">${{ payment.amount.toLocaleString() }}</td>
+            <td class="px-6 py-3.5 text-sm text-gray-600 dark:text-gray-400">{{ payment.method || '—' }}</td>
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ getStatusClasses(payment.status) }}">
+                {{ payment.status | titlecase }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
